@@ -1,16 +1,55 @@
-# This is a sample Python script.
+from exceptoins import WrongName, GameOver, EnemyDown
+from settings import Settings
+from models import Player, Enemy
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-
-
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+settings = Settings()
 
 
-# Press the green button in the gutter to run the script.
+def get_name() -> str:
+    try:
+        full_name = input('Enter your name:')
+        for i in full_name:
+            if i not in settings.valid_characters:
+                raise WrongName
+        if len(full_name) > 16 or len(full_name) < 3:
+            raise WrongName
+    except WrongName:
+        print(f'Wrong name!The name shall be at least 3-16 characters long. \n'
+              f'Spaces and special characters are not permitted. Only a-z, A-Z, 0-9.')
+        return get_name()
+    return full_name
+
+
+def play():
+    user_name = get_name()
+    player = Player(user_name)
+    enemy_level = 1
+    enemy = Enemy(enemy_level)
+    attack_or_defense = 1
+    while True:
+        try:
+            print('Enemy(' + '0' * enemy.enemy_lives + ')\n'
+                  'VS\n'
+                  f'{player.name}(' + '0' * player.lives + ')')
+            if attack_or_defense == 1:
+                player.attack(enemy)
+                attack_or_defense *= -1
+            elif attack_or_defense == -1:
+                player.defense(enemy)
+                attack_or_defense *= -1
+        except EnemyDown:
+            enemy_level += 1
+            enemy = Enemy(enemy_level)
+            attack_or_defense *= 1
+            print('This enemy is down. Score +5.')
+
+
 if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    try:
+        play()
+    except GameOver:
+        print('Game Over')
+    except KeyboardInterrupt:
+        pass
+    finally:
+        print('Good bye!')
