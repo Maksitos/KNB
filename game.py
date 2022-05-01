@@ -7,7 +7,7 @@ settings = Settings()
 
 def get_name() -> str:
     try:
-        full_name = input('Enter your name:')
+        full_name = input('Enter your name: ')
         for i in full_name:
             if i not in settings.valid_characters:
                 raise WrongName
@@ -30,7 +30,8 @@ def play():
         try:
             print('Enemy(' + '0' * enemy.enemy_lives + ')\n'
                   'VS\n'
-                  f'{player.name}(' + '0' * player.lives + ')')
+                  f'{player.name}(' + '0' * player.lives + ')\n'
+                  + f'Your score:{player.score}')
             if attack_or_defense == 1:
                 player.attack(enemy)
                 attack_or_defense *= -1
@@ -40,6 +41,7 @@ def play():
         except EnemyDown:
             enemy_level += 1
             enemy = Enemy(enemy_level)
+            player.score += 5
             attack_or_defense *= 1
             print('This enemy is down. Score +5.')
 
