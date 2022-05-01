@@ -46,12 +46,23 @@ def play():
             print('This enemy is down. Score +5.')
 
 
+def show_scores():
+    with open('scores.txt', 'r') as scores:
+        for line in scores:
+            print(line)
+
+
+menu = {'show scores': show_scores, 'play': play, 'exit': exit}
+
+
 if __name__ == '__main__':
-    try:
-        play()
-    except GameOver:
-        print('Game Over')
-    except KeyboardInterrupt:
-        pass
-    finally:
-        print('Good bye!')
+    while True:
+        try:
+            user_input = input('Menu(play, show scores, exit): ')
+            menu[user_input]()
+        except GameOver:
+            print('Game Over')
+        except KeyError:
+            print('You can only choose what is on the menu.')
+        except KeyboardInterrupt:
+            pass

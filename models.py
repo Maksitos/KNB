@@ -25,6 +25,7 @@ class Player:
     def decrease_lives(self):
         self.lives -= 1
         if self.lives == 0:
+            GameOver.add_score(self.name, self.score)
             raise GameOver
 
     @staticmethod
