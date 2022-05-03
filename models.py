@@ -1,9 +1,6 @@
 import random
 from exceptoins import EnemyDown, GameOver
-from settings import Settings
-
-
-settings = Settings()
+from score import Score
 
 
 def choice_validator(func):
@@ -20,12 +17,12 @@ class Player:
     def __init__(self, name):
         self.name = name
         self.score = 0
-        self.lives = settings.player_lives
+        self.lives = 1
 
     def decrease_lives(self):
         self.lives -= 1
         if self.lives == 0:
-            GameOver.add_score(self.name, self.score)
+            Score.add_score(self.name, self.score)
             raise GameOver
 
     @staticmethod

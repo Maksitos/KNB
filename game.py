@@ -1,23 +1,25 @@
-from exceptoins import WrongName, GameOver, EnemyDown
-from settings import Settings
+from exceptoins import GameOver, EnemyDown
 from models import Player, Enemy
+import string
 
-settings = Settings()
+valid_characters = string.ascii_letters + '1234567890'
 
 
 def get_name() -> str:
-    try:
-        full_name = input('Enter your name: ')
-        for i in full_name:
-            if i not in settings.valid_characters:
-                raise WrongName
-        if len(full_name) > 16 or len(full_name) < 3:
-            raise WrongName
-    except WrongName:
+    full_name = input('Enter your name: ')
+    if all([i in valid_characters for i in full_name]) and 3 <= len(full_name) <= 16:
+        return full_name
+    else:
         print(f'Wrong name!The name shall be at least 3-16 characters long. \n'
               f'Spaces and special characters are not permitted. Only a-z, A-Z, 0-9.')
         return get_name()
-    return full_name
+
+
+def confrontation_display(enemy_lives, player_name, player_lives, player_score):
+    print('Enemy(' + '0' * enemy_lives + ')\n'
+          'VS\n'
+          f'{player_name}(' + '0' * player_lives + ')\n'
+          + f'Your score:{player_score}')
 
 
 def play():
@@ -25,24 +27,16 @@ def play():
     player = Player(user_name)
     enemy_level = 1
     enemy = Enemy(enemy_level)
-    attack_or_defense = 1
     while True:
         try:
-            print('Enemy(' + '0' * enemy.enemy_lives + ')\n'
-                  'VS\n'
-                  f'{player.name}(' + '0' * player.lives + ')\n'
-                  + f'Your score:{player.score}')
-            if attack_or_defense == 1:
-                player.attack(enemy)
-                attack_or_defense *= -1
-            elif attack_or_defense == -1:
-                player.defense(enemy)
-                attack_or_defense *= -1
+            confrontation_display(enemy.enemy_lives, player.name, player.lives, player.score)
+            player.attack(enemy)
+            confrontation_display(enemy.enemy_lives, player.name, player.lives, player.score)
+            player.defense(enemy)
         except EnemyDown:
             enemy_level += 1
             enemy = Enemy(enemy_level)
             player.score += 5
-            attack_or_defense *= 1
             print('This enemy is down. Score +5.')
 
 
