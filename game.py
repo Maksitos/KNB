@@ -1,8 +1,6 @@
 from exceptoins import GameOver, EnemyDown
 from models import Player, Enemy
-import string
-
-valid_characters = string.ascii_letters + '1234567890'
+from settings import valid_characters
 
 
 def get_name() -> str:
@@ -29,9 +27,9 @@ def play():
     enemy = Enemy(enemy_level)
     while True:
         try:
-            confrontation_display(enemy.enemy_lives, player.name, player.lives, player.score)
+            confrontation_display(enemy.lives, player.name, player.lives, player.score)
             player.attack(enemy)
-            confrontation_display(enemy.enemy_lives, player.name, player.lives, player.score)
+            confrontation_display(enemy.lives, player.name, player.lives, player.score)
             player.defense(enemy)
         except EnemyDown:
             enemy_level += 1

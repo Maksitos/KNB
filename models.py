@@ -1,16 +1,7 @@
 import random
 from exceptoins import EnemyDown, GameOver
 from score import Score
-
-
-def choice_validator(func):
-    def validator(*args):
-        try:
-            func(*args)
-        except ValueError:
-            print('You can type only 1, 2 or 3')
-            func(*args)
-    return validator
+from settings import valid_choices
 
 
 class Player:
@@ -21,7 +12,7 @@ class Player:
 
     def decrease_lives(self):
         self.lives -= 1
-        if self.lives == 0:
+        if self.lives < 1:
             Score.add_score(self.name, self.score)
             raise GameOver
 
@@ -38,14 +29,15 @@ class Player:
         else:
             return -1
 
-    @choice_validator
     def attack(self, enemy_obj):
-        attack = int(input('Choose your fighter to attack (Warrior(1), Rogue(2), Wizard(3)): '))
-        if attack not in [1, 2, 3]:
-            print('You can type only 1, 2 or 3')
-            Player.attack(self, enemy_obj)
+        attack = None
+        while attack not in valid_choices:
+            try:
+                attack = int(input('Choose your fighter to attack (Warrior(1), Rogue(2), Wizard(3)): '))
+            except ValueError:
+                print('You can type only 1, 2 or 3')
         defense = enemy_obj.enemy_choice()
-        result_of_fight = Player.fight(attack, defense)
+        result_of_fight = self.fight(attack, defense)
         if result_of_fight == 0:
             print("It's a draw!")
         elif result_of_fight == 1:
@@ -54,14 +46,15 @@ class Player:
         elif result_of_fight == -1:
             print("You missed!")
 
-    @choice_validator
     def defense(self, enemy_obj):
-        defense = int(input('Choose your fighter to defense (Warrior(1), Rogue(2), Wizard(3)): '))
-        if defense not in [1, 2, 3]:
-            print('You can type only 1, 2 or 3')
-            Player.defense(self, enemy_obj)
+        defense = None
+        while defense not in valid_choices:
+            try:
+                defense = int(input('Choose your fighter to defense (Warrior(1), Rogue(2), Wizard(3)): '))
+            except ValueError:
+                print('You can type only 1, 2 or 3')
         attack = enemy_obj.enemy_choice()
-        result_of_fight = Player.fight(attack, defense)
+        result_of_fight = self.fight(attack, defense)
         if result_of_fight == 0:
             print("It's a draw!")
         elif result_of_fight == 1:
@@ -73,13 +66,14 @@ class Player:
 
 class Enemy:
     def __init__(self, level):
-        self.enemy_lives = level
+        self.level = level
+        self.lives = level
 
     @staticmethod
     def enemy_choice():
         return random.randint(1, 3)
 
     def decrease_lives(self):
-        self.enemy_lives -= 1
-        if self.enemy_lives == 0:
+        self.lives -= 1
+        if self.lives < 1:
             raise EnemyDown()
