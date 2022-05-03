@@ -1,16 +1,60 @@
-# This is a sample Python script.
-
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-
-
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+from exceptoins import GameOver, EnemyDown
+from models import Player, Enemy
+from settings import valid_characters
 
 
-# Press the green button in the gutter to run the script.
+def get_name() -> str:
+    full_name = input('Enter your name: ')
+    if all([i in valid_characters for i in full_name]) and 3 <= len(full_name) <= 16:
+        return full_name
+    else:
+        print(f'Wrong name!The name shall be at least 3-16 characters long. \n'
+              f'Spaces and special characters are not permitted. Only a-z, A-Z, 0-9.')
+        return get_name()
+
+
+def confrontation_display(enemy_lives, player_name, player_lives, player_score):
+    print('Enemy(' + '0' * enemy_lives + ')\n'
+          'VS\n'
+          f'{player_name}(' + '0' * player_lives + ')\n'
+          + f'Your score:{player_score}')
+
+
+def play():
+    user_name = get_name()
+    player = Player(user_name)
+    enemy_level = 1
+    enemy = Enemy(enemy_level)
+    while True:
+        try:
+            confrontation_display(enemy.lives, player.name, player.lives, player.score)
+            player.attack(enemy)
+            confrontation_display(enemy.lives, player.name, player.lives, player.score)
+            player.defense(enemy)
+        except EnemyDown:
+            enemy_level += 1
+            enemy = Enemy(enemy_level)
+            player.score += 5
+            print('This enemy is down. Score +5.')
+
+
+def show_scores():
+    with open('scores.txt', 'r') as scores:
+        for line in scores:
+            print(line)
+
+
+menu = {'show scores': show_scores, 'play': play, 'exit': exit}
+
+
 if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    while True:
+        try:
+            user_input = input('Menu(play, show scores, exit): ')
+            menu[user_input]()
+        except GameOver:
+            print('Game Over')
+        except KeyError:
+            print('You can only choose what is on the menu.')
+        except KeyboardInterrupt:
+            pass
